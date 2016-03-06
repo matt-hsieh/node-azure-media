@@ -32,10 +32,22 @@ function AzureBlob(api) {
         function (cb) {
           this.api.rest.asset.create({Name: filename}, cb);
         }.bind(this),
-        //create a policy
+        //create an asset file
         function (asset, cb) {
-          this.api.rest.accesspolicy.findOrCreate(300, 2, function (err, result) {
-            cb(err, {asset: asset, policy: result});
+          this.api.rest.assetfile.create({
+            IsEncrypted: false,
+            IsPrimary: true,
+            Name: filename,
+            ParentAssetId: asset.Id
+          }, function (err, assetFile) {
+            cb(err, {asset: asset, assetFile: assetFile});
+          });
+        }.bind(this),
+        //create a policy
+        function (results, cb) {
+          this.api.rest.accesspolicy.findOrCreate(300, 2, function (err, policy) {
+            results.policy = policy;
+            cb(err, results);
           }.bind(this));
         }.bind(this),
         //create a location
@@ -59,7 +71,12 @@ function AzureBlob(api) {
           var parsedpath = url.parse(path);
           parsedpath.pathname += '/' + filename;
           path = url.format(parsedpath);
-          cb(err, {assetId: result.asset.Id, path: path, locatorId: result.locator.Id});
+
+          result.assetId = result.asset.Id;
+          result.locatorId = result.locator.Id;
+          result.path = path;
+
+          cb(err, result);
         }
       }.bind(this));
     }

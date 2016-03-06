@@ -234,15 +234,17 @@ function AzureAPI(config) {
             headers: this.defaultHeaders(),
             followRedirect: false,
             strictSSL: true,
-            body: JSON.stringify
+            body: JSON.stringify(data)
         }, function (err, res) {
           if (err) return cb(err);
           if (res.statusCode == 200) {
               var data = JSON.parse(res.body).d;
               var dobj = models[model].create(data);
               cb(err, dobj);
+          } if (res.statusCode == 204) {
+            cb(err);
           } else {
-              cb(err || 'Expected 200 status, received: ' + res.statusCode);
+              cb(err || 'Expected 200 or 204 status, received: ' + res.statusCode);
           }
         });
     };
