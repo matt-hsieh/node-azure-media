@@ -32,22 +32,10 @@ function AzureBlob(api) {
         function (cb) {
           this.api.rest.asset.create({Name: filename}, cb);
         }.bind(this),
-        //create an asset file
-        function (asset, cb) {
-          this.api.rest.assetfile.create({
-            IsEncrypted: false,
-            IsPrimary: true,
-            Name: filename,
-            ParentAssetId: asset.Id
-          }, function (err, assetFile) {
-            cb(err, {asset: asset, assetFile: assetFile});
-          });
-        }.bind(this),
         //create a policy
-        function (results, cb) {
+        function (asset, cb) {
           this.api.rest.accesspolicy.findOrCreate(300, 2, function (err, policy) {
-            results.policy = policy;
-            cb(err, results);
+            cb(err, {asset:asset, policy:policy});
           }.bind(this));
         }.bind(this),
         //create a location
