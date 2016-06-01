@@ -11,9 +11,11 @@
     "async": "^0.2.10",
     "moment": "^2.8.3",
     "node-uuid": "^1.4.1",
-    "nodeunit": "^0.8.6",
     "request": "^2.34.0",
     "verymodel": "^1.10.1"
+  },
+  "devDependencies": {
+    "nodeunit": "^0.8.6"
   },
   "main": "index.js"
 }
